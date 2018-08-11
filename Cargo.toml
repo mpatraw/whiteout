@@ -1,0 +1,9 @@
+[package]
+name = "whiteout"
+version = "0.1.0"
+authors = ["Michael Patraw <michaelpatraw@gmail.com>"]
+
+[dependencies]
+bear-lib-terminal = "1.3"
+rand = "0.4"
+froggy = "0.4"
