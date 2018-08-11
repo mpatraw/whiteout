@@ -11,6 +11,7 @@
 extern crate bear_lib_terminal;
 extern crate rand;
 extern crate froggy;
+extern crate cgmath;
 
 use std::fmt;
 use std::mem;
@@ -24,20 +25,9 @@ use bear_lib_terminal::{
 
 use froggy::{Storage, Pointer};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-struct Point {
-    pub x: i32,
-    pub y: i32,
-}
+use cgmath::Vector2;
 
-impl Point {
-    pub fn new(x: i32, y: i32) -> Point {
-        Point{
-            x,
-            y
-        }
-    }
-}
+type Point = Vector2<i32>;
 
 const WIDTH: i32 = 80;
 const HEIGHT: i32 = 24;
@@ -236,14 +226,14 @@ impl Whiteout {
     }
 
     fn can_push_snow(&self, origin: Point, delta: Point, strength: i32) -> bool {
-        let source = Point::new(origin.x + delta.x, origin.y + delta.y);
+        let source = origin + delta;
         if out_of_bounds(source.x, source.y) {
             return false;
         }
         let mut carry = self.field.snow_at(source.x, source.y);
         let mut pushing_max = carry.is_max_pile();
         let mut mult = 2;
-        let mut target = Point::new(origin.x + delta.x * mult, origin.y + delta.y * mult);
+        let mut target = origin + delta * mult;
         let mut strength_required = if pushing_max { 1 } else { 0 };
 
         loop {
@@ -265,15 +255,15 @@ impl Whiteout {
             }
 
             mult += 1;
-            target = Point::new(origin.x + delta.x * mult, origin.y + delta.y * mult);
+            target = origin + delta * mult;
         }
     }
 
     fn push_snow(&mut self, origin: Point, delta: Point) {
-        let source = Point::new(origin.x + delta.x, origin.y + delta.y);
+        let source = origin + delta;
         let mut carry = self.field.snow_at_mut(source.x, source.y).take_all();
         let mut mult = 2;
-        let mut target = Point::new(origin.x + delta.x * mult, origin.y + delta.y * mult);
+        let mut target = origin + delta * mult;
 
         loop {
             self.field.snow_at_mut(target.x, target.y).take_needed(&mut carry);
@@ -283,12 +273,12 @@ impl Whiteout {
             }
 
             mult += 1;
-            target = Point::new(origin.x + delta.x * mult, origin.y + delta.y * mult);
+            target = origin + delta * mult;
         }
     }
 
     fn move_player(&mut self, delta: Point) {
-        let target = Point::new(self.player.x + delta.x, self.player.y + delta.y);
+        let target = self.player + delta;
         if out_of_bounds(target.x, target.y) {
             return;
         }

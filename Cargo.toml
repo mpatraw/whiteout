@@ -7,3 +7,4 @@ authors = ["Michael Patraw <michaelpatraw@gmail.com>"]
 bear-lib-terminal = "1.3"
 rand = "0.4"
 froggy = "0.4"
+cgmath = "0.16"
